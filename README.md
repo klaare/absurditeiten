@@ -1,62 +1,58 @@
 # 🔥 Tering Tongbrekers
 
-Een AI-gedreven tongbreker-generator met audio en share-functionaliteit.
+Een moderne AI-gedreven tongbreker-generator gebouwd met React, TypeScript, en Gemini AI.
 
 ## ✨ Features
 
-- **🤖 AI-generatie**: Extreem moeilijke Nederlandse tongbrekers gegenereerd met Gemini AI
+- **🤖 AI-generatie**: Extreem moeilijke Nederlandse tongbrekers gegenereerd met Google Gemini AI
 - **🔊 Text-to-Speech**: Luister naar de tongbrekers met Nederlandse spraaksynthese
 - **📤 Web Share**: Deel tongbrekers direct via het native share-menu of kopieer naar klembord
 - **💾 Lokale opslag**: Automatisch opslaan van de laatste 50 tongbrekers
-- **📱 Mobile-first**: Responsive design geoptimaliseerd voor mobiele apparaten
-- **⚡ Geen build tools**: Vanilla JavaScript met ES modules
+- **📱 Mobile-first**: Responsive design geoptimaliseerd voor alle apparaten
+- **⚡ Modern stack**: React 19, TypeScript, Vite, Tailwind CSS
+- **🎨 Dark theme**: Clean, minimalistisch design
 
 ## 🚀 Quick Start
 
-### 1. Clone de repository
+### 1. Install dependencies
 
 ```bash
-git clone <repository-url>
-cd tongbrekers
+npm install
 ```
 
-### 2. API Key ophalen
-
-Verkrijg een gratis Gemini API key:
+### 2. Get a Gemini API Key
 
 1. Ga naar [Google AI Studio](https://makersuite.google.com/app/apikey)
 2. Log in met je Google account
 3. Klik op "Create API Key"
 4. Kopieer de key (begint met `AIza...`)
 
-### 3. Start de app
-
-**Optie A: Python (aanbevolen)**
-
-```bash
-python3 -m http.server 8000
-```
-
-**Optie B: Node.js**
+### 3. Start development server
 
 ```bash
 npm run dev
 ```
 
-**Optie C: VS Code Live Server**
+De app draait nu op [http://localhost:5173](http://localhost:5173)
 
-Installeer de "Live Server" extensie en klik op "Go Live"
-
-### 4. Open in browser
-
-Open [http://localhost:8000](http://localhost:8000)
-
-### 5. API Key instellen
+### 4. API Key instellen
 
 Bij eerste gebruik:
 1. Plak je Gemini API key in het invoerveld
 2. Klik op "Opslaan"
 3. De key wordt veilig opgeslagen in LocalStorage
+
+## 📦 Build voor productie
+
+```bash
+npm run build
+```
+
+Preview de production build:
+
+```bash
+npm run preview
+```
 
 ## 📖 Gebruik
 
@@ -68,89 +64,95 @@ Bij eerste gebruik:
 
 ```
 tongbrekers/
-├── index.html              # Hoofd HTML bestand
-├── package.json            # NPM configuratie
-├── .env.example            # Voorbeeld voor API key
-├── README.md               # Dit bestand
-├── css/
-│   └── styles.css          # Styling (mobile-first)
-├── js/
-│   ├── app.js              # Hoofd applicatie logica
-│   ├── gemini.js           # Gemini API integratie
-│   ├── storage.js          # LocalStorage management
-│   ├── tts.js              # Text-to-Speech
-│   └── share.js            # Web Share API
-└── assets/                 # (optioneel) Images/icons
+├── src/
+│   ├── components/          # React componenten
+│   │   ├── ApiKeyInput.tsx
+│   │   ├── GenerateButton.tsx
+│   │   ├── Notification.tsx
+│   │   ├── TongbrekerItem.tsx
+│   │   └── TongbrekerList.tsx
+│   ├── hooks/               # Custom React hooks
+│   │   ├── useLocalStorage.ts
+│   │   ├── useShare.ts
+│   │   └── useTTS.ts
+│   ├── services/            # API services
+│   │   └── gemini.ts
+│   ├── types/               # TypeScript types
+│   │   └── index.ts
+│   ├── utils/               # Utility functions
+│   │   └── storage.ts
+│   ├── App.tsx              # Main app component
+│   ├── main.tsx             # Entry point
+│   └── index.css            # Global styles
+├── public/                  # Static assets
+├── index.html               # HTML template
+├── vite.config.ts           # Vite configuration
+├── tailwind.config.js       # Tailwind configuration
+├── tsconfig.json            # TypeScript configuration
+└── package.json             # Dependencies
 ```
 
-## 🔧 Technische Details
+## 🔧 Tech Stack
 
-### Tech Stack
-
-- **Frontend**: Vanilla JavaScript (ES6+)
-- **Styling**: Pure CSS (CSS Variables, Flexbox)
+- **Framework**: React 19
+- **Language**: TypeScript
+- **Build Tool**: Vite 7
+- **Styling**: Tailwind CSS 3
 - **AI**: Google Gemini API (gemini-1.5-flash)
 - **TTS**: Web Speech API
 - **Storage**: LocalStorage API
 - **Sharing**: Web Share API + Clipboard API fallback
 
-### API Configuratie
+## 🎨 Customization
 
-**Gemini API Endpoint:**
+### Tailwind Colors
+
+Bewerk `tailwind.config.js`:
+
+```javascript
+theme: {
+  extend: {
+    colors: {
+      primary: {
+        DEFAULT: '#ff4444',
+        dark: '#cc0000',
+      },
+      background: {
+        DEFAULT: '#0a0a0a',
+        surface: '#1a1a1a',
+        hover: '#252525',
+      },
+    },
+  },
+}
 ```
-https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent
+
+### AI Prompt
+
+Pas de system prompt aan in `src/services/gemini.ts` om de stijl van tongbrekers te wijzigen.
+
+### TTS Settings
+
+Pas TTS opties aan in `src/hooks/useTTS.ts`:
+
+```typescript
+utterance.rate = 0.85;  // Snelheid (0.1 - 10)
+utterance.pitch = 1.0;  // Toonhoogte (0 - 2)
+utterance.volume = 1.0; // Volume (0 - 1)
 ```
 
-**TTS Settings:**
-- Taal: `nl-NL` (Nederlands)
-- Rate: `0.85` (iets langzamer voor moeilijke tongbrekers)
-- Pitch: `1.0`
-- Volume: `1.0`
-
-### Browser Compatibiliteit
+## 🌐 Browser Compatibiliteit
 
 **Volledig ondersteund:**
 - Chrome/Edge 90+
 - Safari 14+
 - Firefox 88+
 
-**TTS Support:**
-- Chrome/Edge ✅
-- Safari ✅
-- Firefox ✅ (beperkte Nederlandse stemmen)
-
-**Web Share:**
-- Mobile browsers ✅
-- Desktop (beperkt) - gebruikt clipboard fallback
-
-## 🎨 Customization
-
-### Stijl aanpassen
-
-Bewerk CSS variabelen in `css/styles.css`:
-
-```css
-:root {
-    --primary: #ff4444;           /* Primaire kleur */
-    --background: #0a0a0a;        /* Achtergrondkleur */
-    --text: #ffffff;              /* Tekstkleur */
-    /* ... meer variabelen ... */
-}
-```
-
-### AI Prompt aanpassen
-
-Bewerk de `SYSTEM_PROMPT` in `js/gemini.js` om de stijl van tongbrekers aan te passen.
-
-### TTS Settings
-
-Pas TTS opties aan in `js/tts.js`:
-
-```javascript
-utterance.rate = 0.9;   // Snelheid (0.1 - 10)
-utterance.pitch = 1.0;  // Toonhoogte (0 - 2)
-utterance.volume = 1.0; // Volume (0 - 1)
-```
+**Features:**
+- ✅ React & TypeScript
+- ✅ TTS (Web Speech API)
+- ✅ Web Share (mobile) / Clipboard (desktop)
+- ✅ LocalStorage
 
 ## 🔒 Privacy & Veiligheid
 
@@ -158,6 +160,8 @@ utterance.volume = 1.0; // Volume (0 - 1)
 - Geen server-side opslag van data
 - Geen tracking of analytics
 - Alle data blijft op het apparaat van de gebruiker
+- Type-safe TypeScript code
+- ESLint configuratie voor code quality
 
 ## 🐛 Troubleshooting
 
@@ -165,7 +169,7 @@ utterance.volume = 1.0; // Volume (0 - 1)
 
 - Check of de key begint met `AIza`
 - Vernieuw de key in Google AI Studio
-- Clear browser cache en probeer opnieuw
+- Clear browser LocalStorage en probeer opnieuw
 
 ### TTS werkt niet
 
@@ -173,19 +177,34 @@ utterance.volume = 1.0; // Volume (0 - 1)
 - Check of je systeem Nederlandse taalondersteuning heeft
 - Probeer een andere browser (Chrome werkt het best)
 
-### Delen werkt niet op desktop
+### Build errors
 
-- Dit is normaal - Web Share API werkt vooral op mobiel
-- De app gebruikt automatisch clipboard als fallback
-- Klik op 📋 om te kopiëren naar klembord
+```bash
+# Clear node_modules en reinstall
+rm -rf node_modules package-lock.json
+npm install
 
-## 📝 Licentie
+# Clear Vite cache
+rm -rf node_modules/.vite
+npm run dev
+```
+
+## 📝 Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build voor productie
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
+
+## 📄 Licentie
 
 MIT License - Vrij te gebruiken voor persoonlijke en commerciële projecten.
 
 ## 🙏 Credits
 
 - **AI**: Google Gemini API
+- **Framework**: React & Vite
+- **Styling**: Tailwind CSS
 - **TTS**: Web Speech API
 - **Icons**: Unicode emoji's
 
