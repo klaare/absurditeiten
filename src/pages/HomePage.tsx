@@ -13,7 +13,7 @@ export const HomePage = () => {
           </p>
         </header>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {/* Tongbrekers Card */}
           <Link
             to="/tongbrekers"
@@ -51,6 +51,26 @@ export const HomePage = () => {
             </div>
             <div className="mt-6 text-ink font-bold group-hover:translate-x-2 transition-transform">
               Genereer condoleance →
+            </div>
+          </Link>
+
+          {/* Spreuken Card */}
+          <Link
+            to="/spreuken"
+            className="group bg-gradient-to-br from-blue-800 to-blue-900 p-8 rounded-lg border-4 border-blue-700 hover:border-blue-500 transition-all hover:scale-105 shadow-xl"
+          >
+            <div className="text-6xl mb-4">🏺</div>
+            <h2 className="text-3xl font-bold text-white mb-3">
+              Onwijsheden Tegels
+            </h2>
+            <p className="text-blue-100 mb-4">
+              Digitale delftsblauwe tegeltjes met onlogische spreuken die doen alsof ze eeuwenoude wijsheid bevatten.
+            </p>
+            <div className="text-blue-200 text-sm italic">
+              "Een eekhoorn in de hand is beter dan tien op het dak..."
+            </div>
+            <div className="mt-6 text-white font-bold group-hover:translate-x-2 transition-transform">
+              Bekijk tegels →
             </div>
           </Link>
         </div>

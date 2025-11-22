@@ -25,8 +25,8 @@ export const Navbar = () => {
                 border-2 transition-all
                 ${
                   isActive('/tongbrekers')
-                    ? 'bg-primary text-white border-primary'
-                    : 'bg-transparent text-ink border-ink hover:bg-ink hover:text-paper'
+                      ? 'bg-ink text-paper border-ink'
+                      : 'bg-transparent text-ink border-ink hover:bg-ink hover:text-paper'
                 }
               `}
             >
@@ -45,6 +45,20 @@ export const Navbar = () => {
               `}
             >
               🕊️ Condoleances
+            </Link>
+            <Link
+              to="/spreuken"
+              className={`
+                px-6 py-2 font-serif font-bold uppercase tracking-wider text-sm
+                border-2 transition-all
+                ${
+                  isActive('/spreuken')
+                    ? 'bg-blue-600 text-white border-blue-600'
+                    : 'bg-transparent text-ink border-ink hover:bg-ink hover:text-paper'
+                }
+              `}
+            >
+              🏺 Spreuken
             </Link>
           </div>
         </div>
