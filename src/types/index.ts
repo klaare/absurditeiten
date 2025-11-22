@@ -4,6 +4,12 @@ export interface Condoleance {
   created_at: string;
 }
 
+export interface Tongbreker {
+  id: string;
+  text: string;
+  created_at: string;
+}
+
 export interface ApiKeyConfig {
   key: string | null;
   isValid: boolean;
