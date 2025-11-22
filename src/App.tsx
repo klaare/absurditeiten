@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Tongbreker } from './types';
 import { generateId } from './utils/storage';
 import { geminiService } from './services/gemini';
@@ -15,20 +15,30 @@ function App() {
   );
   const [apiKey, setApiKey] = useLocalStorage<string | null>('gemini_api_key', null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [showApiKeyInput, setShowApiKeyInput] = useState(false);
   const [notification, setNotification] = useState<{
     message: string;
     type: 'success' | 'error';
   } | null>(null);
 
-  const showApiKeyInput = !apiKey;
+  // Get API key from environment or localStorage
+  const envApiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  const activeApiKey = apiKey || envApiKey;
+
+  // Only show API key input if no key is available (env or localStorage)
+  useEffect(() => {
+    setShowApiKeyInput(!activeApiKey);
+  }, [activeApiKey]);
 
   const handleSaveApiKey = (key: string) => {
     setApiKey(key);
+    setShowApiKeyInput(false);
     showNotification('API key opgeslagen! 🎉', 'success');
   };
 
   const handleGenerate = async () => {
-    if (!apiKey) {
+    if (!activeApiKey) {
+      setShowApiKeyInput(true);
       showNotification('API key vereist!', 'error');
       return;
     }
@@ -36,7 +46,7 @@ function App() {
     setIsGenerating(true);
 
     try {
-      const text = await geminiService.generateTongbreker(apiKey);
+      const text = await geminiService.generateTongbreker(activeApiKey);
 
       const tongbreker: Tongbreker = {
         id: generateId(),
@@ -48,7 +58,14 @@ function App() {
       showNotification('Tongbreker gegenereerd! 🔥', 'success');
     } catch (error: any) {
       console.error('Generation error:', error);
-      showNotification(error.message || 'AI struikelde over zijn eigen tong...', 'error');
+
+      // Show API key input on rate limit error
+      if (error.message?.includes('Te veel requests') || error.message?.includes('429')) {
+        setShowApiKeyInput(true);
+        showNotification('Rate limited! Voer een andere API key in. ⚠️', 'error');
+      } else {
+        showNotification(error.message || 'AI struikelde over zijn eigen tong...', 'error');
+      }
     } finally {
       setIsGenerating(false);
     }
