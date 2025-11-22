@@ -1,49 +1,47 @@
-import type { Condoleance } from '../types';
+import type { Tongbreker } from '../types';
 
 const STORAGE_KEYS = {
-  CONDOLEANCES: 'curieuze_condoleances_history',
+  TONGBREKERS: 'tering_tongbrekers_history',
   API_KEY: 'gemini_api_key',
   MAX_ITEMS: 50,
 } as const;
 
-export const storage = {
-  // Condoleances
-  getCondoleances: (): Condoleance[] => {
+export const tongbrekerStorage = {
+  getTongbrekers: (): Tongbreker[] => {
     try {
-      const data = localStorage.getItem(STORAGE_KEYS.CONDOLEANCES);
+      const data = localStorage.getItem(STORAGE_KEYS.TONGBREKERS);
       return data ? JSON.parse(data) : [];
     } catch (error) {
-      console.error('Error loading condoleances:', error);
+      console.error('Error loading tongbrekers:', error);
       return [];
     }
   },
 
-  saveCondoleance: (condoleance: Condoleance): boolean => {
+  saveTongbreker: (tongbreker: Tongbreker): boolean => {
     try {
-      const history = storage.getCondoleances();
-      history.unshift(condoleance);
+      const history = tongbrekerStorage.getTongbrekers();
+      history.unshift(tongbreker);
       const trimmed = history.slice(0, STORAGE_KEYS.MAX_ITEMS);
-      localStorage.setItem(STORAGE_KEYS.CONDOLEANCES, JSON.stringify(trimmed));
+      localStorage.setItem(STORAGE_KEYS.TONGBREKERS, JSON.stringify(trimmed));
       return true;
     } catch (error) {
-      console.error('Error saving condoleance:', error);
+      console.error('Error saving tongbreker:', error);
       return false;
     }
   },
 
-  deleteCondoleance: (id: string): boolean => {
+  deleteTongbreker: (id: string): boolean => {
     try {
-      const history = storage.getCondoleances();
+      const history = tongbrekerStorage.getTongbrekers();
       const filtered = history.filter((t) => t.id !== id);
-      localStorage.setItem(STORAGE_KEYS.CONDOLEANCES, JSON.stringify(filtered));
+      localStorage.setItem(STORAGE_KEYS.TONGBREKERS, JSON.stringify(filtered));
       return true;
     } catch (error) {
-      console.error('Error deleting condoleance:', error);
+      console.error('Error deleting tongbreker:', error);
       return false;
     }
   },
 
-  // API Key
   getApiKey: (): string | null => {
     try {
       return localStorage.getItem(STORAGE_KEYS.API_KEY);
@@ -64,11 +62,7 @@ export const storage = {
   },
 
   hasApiKey: (): boolean => {
-    const key = storage.getApiKey();
+    const key = tongbrekerStorage.getApiKey();
     return key !== null && key.trim().length > 0;
   },
-};
-
-export const generateId = (): string => {
-  return crypto.randomUUID();
 };

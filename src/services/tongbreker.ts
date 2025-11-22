@@ -22,7 +22,7 @@ Voorbeeldstijl:
 const USER_PROMPT = `Genereer 1 extreem moeilijke, originele Nederlandse tongbreker.
 Moeilijkheid: onuitspreekbaar.`;
 
-export const geminiService = {
+export const tongbrekerService = {
   validateApiKey: (apiKey: string): boolean => {
     if (!apiKey || typeof apiKey !== 'string') {
       return false;

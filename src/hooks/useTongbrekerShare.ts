@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
-import type { Condoleance } from '../types';
-import { createShareUrl } from '../utils/url';
+import type { Tongbreker } from '../types';
+import { createTongbrekerShareUrl } from '../utils/tongbrekerUrl';
 
-export const useShare = () => {
+export const useTongbrekerShare = () => {
   const isSupported = 'share' in navigator;
 
   const copyToClipboard = async (text: string): Promise<boolean> => {
@@ -32,15 +32,14 @@ export const useShare = () => {
   };
 
   const share = useCallback(
-    async (condoleance: Condoleance): Promise<{ success: boolean; method: 'share' | 'copy' }> => {
-      // Create shareable URL with condoleance encoded
-      const shareUrl = createShareUrl(condoleance);
+    async (tongbreker: Tongbreker): Promise<{ success: boolean; method: 'share' | 'copy' }> => {
+      const shareUrl = createTongbrekerShareUrl(tongbreker);
 
       if (isSupported) {
         try {
           await navigator.share({
-            title: '🕊️ Curieuze Condoleance',
-            text: condoleance.text,
+            title: '🔥 Tering Tongbreker',
+            text: tongbreker.text,
             url: shareUrl,
           });
           return { success: true, method: 'share' };
@@ -52,8 +51,7 @@ export const useShare = () => {
         }
       }
 
-      // Fallback to clipboard - copy the URL with the condoleance
-      const shareText = `${condoleance.text}\n\n${shareUrl}`;
+      const shareText = `${tongbreker.text}\n\n${shareUrl}`;
       const success = await copyToClipboard(shareText);
       return { success, method: 'copy' };
     },

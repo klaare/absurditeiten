@@ -1,8 +1,8 @@
 {
-  "name": "tering-tongbrekers",
+  "name": "ai-absurditeiten",
   "private": true,
   "version": "1.0.0",
-  "description": "AI-gedreven Nederlandse tongbreker generator met Gemini AI",
+  "description": "AI-gedreven generators voor satirische en absurde ideëen",
   "author": "",
   "license": "MIT",
   "type": "module",
@@ -14,7 +14,9 @@
   },
   "dependencies": {
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.9.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

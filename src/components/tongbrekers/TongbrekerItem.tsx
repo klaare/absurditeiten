@@ -1,15 +1,16 @@
-import type { Tongbreker } from '../types';
-import { useTTS } from '../hooks/useTTS';
-import { useShare } from '../hooks/useShare';
+import type { Tongbreker } from '../../types';
+import { useTTS } from '../../hooks/useTTS';
+import { useTongbrekerShare } from '../../hooks/useTongbrekerShare';
 import { useState } from 'react';
 
 interface TongbrekerItemProps {
   tongbreker: Tongbreker;
+  onDelete: (id: string) => void;
 }
 
-export const TongbrekerItem = ({ tongbreker }: TongbrekerItemProps) => {
+export const TongbrekerItem = ({ tongbreker, onDelete }: TongbrekerItemProps) => {
   const { speak, currentId, isSupported: ttsSupported } = useTTS();
-  const { share, isSupported: shareSupported } = useShare();
+  const { share, isSupported: shareSupported } = useTongbrekerShare();
   const [notification, setNotification] = useState('');
 
   const isPlaying = currentId === tongbreker.id;
@@ -32,6 +33,11 @@ export const TongbrekerItem = ({ tongbreker }: TongbrekerItemProps) => {
     } else {
       showNotification('❌ Delen mislukt');
     }
+  };
+
+  const handleDelete = () => {
+    onDelete(tongbreker.id);
+    showNotification('🗑️ Verwijderd');
   };
 
   const showNotification = (msg: string) => {
@@ -59,17 +65,19 @@ export const TongbrekerItem = ({ tongbreker }: TongbrekerItemProps) => {
   };
 
   return (
-    <div className="bg-background-surface rounded-xl p-6 shadow-xl hover:bg-background-hover hover:-translate-y-1 transition-all duration-300 animate-slide-in relative">
-      <p className="text-white text-lg leading-relaxed mb-4">{tongbreker.text}</p>
+    <div className="bg-red-950 border-2 border-red-700 rounded-xl p-6 shadow-2xl hover:border-orange-500 hover:-translate-y-1 transition-all duration-300 animate-slide-in relative">
+      <p className="text-white text-lg leading-relaxed mb-4 font-semibold">
+        {tongbreker.text}
+      </p>
       <div className="flex items-center justify-between">
-        <span className="text-gray-400 text-sm">{formatDate(tongbreker.created_at)}</span>
+        <span className="text-red-400 text-sm">{formatDate(tongbreker.created_at)}</span>
         <div className="flex gap-2">
           <button
             onClick={handlePlay}
             disabled={!ttsSupported}
             className={`
-              px-4 py-2 text-2xl rounded-lg border border-gray-700
-              bg-background hover:bg-background-hover hover:border-primary
+              px-4 py-2 text-2xl rounded-lg border-2 border-red-600
+              bg-red-900 hover:bg-red-800 hover:border-orange-500
               transition-all duration-200 hover:scale-110 active:scale-95
               ${!ttsSupported ? 'opacity-40 cursor-not-allowed' : ''}
             `}
@@ -79,16 +87,23 @@ export const TongbrekerItem = ({ tongbreker }: TongbrekerItemProps) => {
           </button>
           <button
             onClick={handleShare}
-            className="px-4 py-2 text-2xl rounded-lg border border-gray-700 bg-background hover:bg-background-hover hover:border-primary transition-all duration-200 hover:scale-110 active:scale-95"
+            className="px-4 py-2 text-2xl rounded-lg border-2 border-red-600 bg-red-900 hover:bg-red-800 hover:border-orange-500 transition-all duration-200 hover:scale-110 active:scale-95"
             title={shareSupported ? 'Delen' : 'Kopieer'}
           >
             {shareSupported ? '📤' : '📋'}
+          </button>
+          <button
+            onClick={handleDelete}
+            className="px-4 py-2 text-2xl rounded-lg border-2 border-red-600 bg-red-900 hover:bg-red-800 hover:border-red-500 transition-all duration-200 hover:scale-110 active:scale-95"
+            title="Verwijder"
+          >
+            🗑️
           </button>
         </div>
       </div>
 
       {notification && (
-        <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 bg-green-500 text-black px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap animate-slide-in">
+        <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 bg-orange-500 text-black px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap animate-slide-in z-10">
           {notification}
         </div>
       )}
