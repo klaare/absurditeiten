@@ -11,7 +11,7 @@ import { getCondoleanceFromUrl, clearUrlParams } from './utils/url';
 
 function App() {
   const [condoleances, setCondoleances] = useLocalStorage<Condoleance[]>(
-    'tering_condoleances_history',
+    'curieuze_condoleances_history',
     []
   );
   const [apiKey, setApiKey] = useLocalStorage<string | null>('gemini_api_key', null);
@@ -26,7 +26,7 @@ function App() {
   const envApiKey = import.meta.env.VITE_GEMINI_API_KEY;
   const activeApiKey = apiKey || envApiKey;
 
-  // Check for shared tongbreker in URL on mount
+  // Check for shared condoleance in URL on mount
   useEffect(() => {
     const sharedCondoleance = getCondoleanceFromUrl();
     if (sharedCondoleance) {
@@ -41,7 +41,7 @@ function App() {
       });
       // Clear URL params for clean URL
       clearUrlParams();
-      showNotification('Gedeelde tongbreker geladen! 🔥', 'success');
+      showNotification('Gedeelde condoleance geladen', 'success');
     }
   }, []);
 
@@ -53,13 +53,13 @@ function App() {
   const handleSaveApiKey = (key: string) => {
     setApiKey(key);
     setShowApiKeyInput(false);
-    showNotification('API key opgeslagen! 🎉', 'success');
+    showNotification('API key opgeslagen', 'success');
   };
 
   const handleGenerate = async () => {
     if (!activeApiKey) {
       setShowApiKeyInput(true);
-      showNotification('API key vereist!', 'error');
+      showNotification('API key vereist', 'error');
       return;
     }
 
@@ -68,23 +68,23 @@ function App() {
     try {
       const text = await geminiService.generateCondoleance(activeApiKey);
 
-      const tongbreker: Condoleance = {
+      const condoleance: Condoleance = {
         id: generateId(),
         text,
         created_at: new Date().toISOString(),
       };
 
-      setCondoleances((prev) => [tongbreker, ...prev].slice(0, 50));
-      showNotification('Condoleance gegenereerd! 🔥', 'success');
+      setCondoleances((prev) => [condoleance, ...prev].slice(0, 50));
+      showNotification('Nieuwe condoleance gegenereerd', 'success');
     } catch (error: any) {
       console.error('Generation error:', error);
 
       // Show API key input on rate limit error
       if (error.message?.includes('Te veel requests') || error.message?.includes('429')) {
         setShowApiKeyInput(true);
-        showNotification('Rate limited! Voer een andere API key in. ⚠️', 'error');
+        showNotification('Rate limited! Voer een andere API key in.', 'error');
       } else {
-        showNotification(error.message || 'AI struikelde over zijn eigen tong...', 'error');
+        showNotification(error.message || 'Er ging iets mis...', 'error');
       }
     } finally {
       setIsGenerating(false);
@@ -100,15 +100,27 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-white">
-      <div className="max-w-3xl mx-auto px-4 py-8 md:py-12">
-        {/* Header */}
-        <header className="text-center mb-8 md:mb-12">
-          <h1 className="text-4xl md:text-6xl font-black mb-2 bg-gradient-to-r from-primary to-orange-500 bg-clip-text text-transparent">
-            🔥 Tering Condoleances 🔥
-          </h1>
-          <p className="text-gray-400 uppercase tracking-widest text-sm">
-            AI-gedreven tongbreker chaos
+    <div className="min-h-screen bg-paper">
+      <div className="max-w-4xl mx-auto px-4 py-8 md:py-12">
+        {/* Newspaper Header */}
+        <header className="text-center mb-12 border-b-4 border-double border-ink pb-8">
+          <div className="mb-4">
+            <div className="text-xs tracking-widest text-ink-faded uppercase mb-2">
+              Sinds 2024
+            </div>
+            <h1 className="font-headline text-5xl md:text-7xl text-ink mb-2 leading-tight">
+              Curieuze Condoleances
+            </h1>
+            <div className="flex items-center justify-center gap-4 text-xs text-ink-faded uppercase tracking-widest">
+              <span>•</span>
+              <span>In Memoriam</span>
+              <span>•</span>
+              <span>Satirisch Rouwregister</span>
+              <span>•</span>
+            </div>
+          </div>
+          <p className="text-sm text-ink-light italic max-w-2xl mx-auto leading-relaxed">
+            "Voor wanneer woorden tekortschieten... of compleet de plank misslaan"
           </p>
         </header>
 
@@ -122,18 +134,24 @@ function App() {
           {/* API Key Input */}
           {showApiKeyInput && <ApiKeyInput onSave={handleSaveApiKey} />}
 
+          {/* Ornamental Divider */}
+          <div className="ornamental-divider my-12">
+            <span className="bg-paper px-4 text-xs tracking-widest text-ink-faded uppercase">
+              Rouwadvertenties
+            </span>
+          </div>
+
           {/* Recent Condoleances */}
           <section>
-            <h2 className="text-center text-gray-400 tracking-[0.3em] font-semibold mb-6">
-              — RECENT —
-            </h2>
             <CondoleanceList condoleances={condoleances} />
           </section>
         </main>
 
         {/* Footer */}
-        <footer className="text-center mt-16 pt-8 border-t border-background-surface">
-          <p className="text-gray-500 text-sm">Gemaakt met 🤖 Gemini AI</p>
+        <footer className="text-center mt-16 pt-8 border-t-2 border-ink-light">
+          <p className="text-xs text-ink-faded tracking-wide">
+            © {new Date().getFullYear()} • Curieuze Condoleances • Satirische uitgave • Niet bedoeld voor daadwerkelijk gebruik
+          </p>
         </footer>
       </div>
 
