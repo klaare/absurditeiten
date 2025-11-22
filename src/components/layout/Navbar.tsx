@@ -44,7 +44,7 @@ export const Navbar = () => {
           </button>
 
           {/* Desktop Navigation Links (Hidden on Mobile) */}
-          <div className="hidden md:flex gap-1 flex-wrap justify-end max-w-4xl">
+          <div className="hidden md:flex gap-1 flex-wrap justify-start max-w-4xl">
             {navLinks.map((link) => (
               <Link
                 key={link.to}
