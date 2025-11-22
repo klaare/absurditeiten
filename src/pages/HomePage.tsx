@@ -93,6 +93,26 @@ export const HomePage = () => {
               Genereer kansloos CV →
             </div>
           </Link>
+
+          {/* Frappante Fobieën Card */}
+          <Link
+            to="/fobieen"
+            className="group bg-gradient-to-br from-teal-800 to-cyan-900 p-8 rounded-lg border-4 border-teal-700 hover:border-teal-500 transition-all hover:scale-105 shadow-xl"
+          >
+            <div className="text-6xl mb-4">😰</div>
+            <h2 className="text-3xl font-bold text-white mb-3">
+              Frappante Fobieën
+            </h2>
+            <p className="text-teal-100 mb-4">
+              Absurde, hilarische angsten (echt of fictief) met extreme humoristische twists die je doen lachen én nadenken.
+            </p>
+            <div className="text-teal-200 text-sm italic">
+              "De irrationele angst dat er een eend is die je overal volgt..."
+            </div>
+            <div className="mt-6 text-white font-bold group-hover:translate-x-2 transition-transform">
+              Genereer fobie →
+            </div>
+          </Link>
         </div>
 
         <footer className="text-center mt-20 text-ink-faded text-sm">
