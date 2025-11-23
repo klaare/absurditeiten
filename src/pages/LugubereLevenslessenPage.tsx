@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import html2canvas from 'html2canvas';
 import { generateId } from '../utils/storage';
 import { levenslesService } from '../services/levensles';
 import { ApiKeyInput } from '../components/ApiKeyInput';
@@ -28,23 +29,7 @@ export const LugubereLevenslessenPage = () => {
     } | null>(null);
 
     const { speak, currentId, isSupported: ttsSupported } = useTTS();
-    const { share } = useShare();
-
-    const handleShare = async (les: Levensles) => {
-        // Cast to any to bypass strict type check if Condoleance type is rigid, 
-        // or ensure Levensles is compatible. 
-        // Assuming share expects { text: string } at minimum or we adapt it.
-        // Based on useShare, it takes Condoleance. Let's construct a compatible object.
-        const shareable = { ...les, title: 'Lugubere Levensles' } as any;
-        const result = await share(shareable);
-        if (result.success) {
-            if (result.method === 'copy') {
-                showNotification('De duisternis is gekopieerd naar uw klembord', 'success');
-            }
-        } else {
-            showNotification('Het delen van deze last is mislukt', 'error');
-        }
-    };
+    const { isSupported: shareSupported } = useShare();
 
     const envApiKey = import.meta.env.VITE_GEMINI_API_KEY;
     const activeApiKey = apiKey || envApiKey;
@@ -84,6 +69,126 @@ export const LugubereLevenslessenPage = () => {
             showNotification(error.message || 'De duisternis zwijgt...', 'error');
         } finally {
             setIsGenerating(false);
+        }
+    };
+
+    const handleShare = async (les: Levensles) => {
+        // Create a temporary container for the square image
+        const container = document.createElement('div');
+        Object.assign(container.style, {
+            width: '1080px',
+            height: '1080px',
+            position: 'fixed',
+            left: '-9999px',
+            top: '0',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: '80px',
+            backgroundColor: '#0f172a', // slate-900
+            backgroundImage: 'linear-gradient(to bottom right, #0f172a, #1e293b)',
+            fontFamily: 'serif',
+            color: '#f1f5f9', // slate-100
+            boxSizing: 'border-box',
+        });
+
+        // Construct the inner HTML for the card
+        container.innerHTML = `
+            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 12px; background-color: #7f1d1d;"></div>
+            <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 12px; background-color: #7f1d1d;"></div>
+            
+            <div style="
+                font-size: 32px; 
+                text-transform: uppercase; 
+                letter-spacing: 0.3em; 
+                color: #ef4444; 
+                margin-bottom: 60px; 
+                font-family: sans-serif; 
+                font-weight: bold;
+                text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            ">
+                Lugubere Levenslessen
+            </div>
+
+            <div style="
+                font-size: 56px; 
+                line-height: 1.4; 
+                text-align: center; 
+                font-style: italic; 
+                margin-bottom: 80px; 
+                max-width: 90%;
+                text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            ">
+                "${les.text}"
+            </div>
+
+            <div style="
+                font-size: 24px; 
+                color: #64748b; 
+                text-transform: uppercase; 
+                letter-spacing: 0.15em; 
+                font-family: sans-serif;
+                font-weight: 600;
+            ">
+                ${new Date(les.created_at).toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' })}
+            </div>
+            
+            <div style="
+                margin-top: 20px;
+                font-size: 16px;
+                color: #475569;
+                font-family: sans-serif;
+            ">
+                ai-absurditeiten.nl
+            </div>
+        `;
+
+        document.body.appendChild(container);
+
+        try {
+            const canvas = await html2canvas(container, {
+                scale: 1, // 1080x1080 is already high res
+                backgroundColor: null,
+                useCORS: true,
+            });
+
+            canvas.toBlob(async (blob) => {
+                if (!blob) {
+                    showNotification('Kon geen afbeelding genereren', 'error');
+                    return;
+                }
+
+                const file = new File([blob], 'lugubere-levensles.png', { type: 'image/png' });
+
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({
+                            files: [file],
+                            title: 'Lugubere Levensles',
+                            text: 'Een wijsheid uit de duisternis...',
+                        });
+                        showNotification('De duisternis is gedeeld', 'success');
+                    } catch (error) {
+                        if ((error as Error).name !== 'AbortError') {
+                            console.error('Share error:', error);
+                            showNotification('Delen mislukt', 'error');
+                        }
+                    }
+                } else {
+                    // Fallback: Download image
+                    const link = document.createElement('a');
+                    link.download = 'lugubere-levensles.png';
+                    link.href = canvas.toDataURL();
+                    link.click();
+                    showNotification('Afbeelding gedownload (delen niet ondersteund)', 'success');
+                }
+            }, 'image/png');
+        } catch (error) {
+            console.error('Image generation error:', error);
+            showNotification('Kon geen afbeelding genereren', 'error');
+        } finally {
+            document.body.removeChild(container);
         }
     };
 
