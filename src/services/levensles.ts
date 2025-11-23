@@ -39,7 +39,7 @@ export const levenslesService = {
         const requestBody = {
             contents: [{ role: 'user', parts: [{ text: `${SYSTEM_PROMPT}\n\nGenereer één lugubere levensles zoals in de system-prompt beschreven wordt` }] }],
             generationConfig: {
-                temperature: 1.2,
+                temperature: 2,
                 topK: 40,
                 topP: 0.95,
                 thinkingConfig: {
