@@ -18,9 +18,7 @@ Antwoord ALTIJD in exact dit JSON-formaat zonder markdown:
   "beschrijving": "De beschrijving van de fobie."
 }`;
 
-const USER_PROMPT = `Genereer 1 nieuwe, EXTREEM ABSURDE fobie volgens de regels (mag echt of fictief zijn).
-Maak het zo grappig, overdreven en absurd mogelijk!
-Antwoord ALLEEN in het opgegeven JSON formaat, zonder `;
+const USER_PROMPT = `Genereer 1 extreem absurde, unieke fobie. Antwoord uitsluitend in JSON.`;
 
 interface FobieResponse {
   naam: string;
