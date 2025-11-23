@@ -68,7 +68,7 @@ export const fobieService = {
       ],
       generationConfig: {
         temperature: 2,
-        topK: 60,
+        topK: 40,
         topP: 0.95,
         thinkingConfig: {
           thinkingBudget: 0
