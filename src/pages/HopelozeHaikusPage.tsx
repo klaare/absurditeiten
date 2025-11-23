@@ -9,20 +9,19 @@ export const HopelozeHaikusPage = () => {
   const [haikus, setHaikus] = useState<Haiku[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [apiKey, setApiKey] = useState('');
+  const [apiKey, setApiKey] = useState<string | null>(null);
   const [showApiInput, setShowApiInput] = useState(false);
   const [extraHopeloosheid, setExtraHopeloosheid] = useState(false);
+
+  const envApiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  const activeApiKey = apiKey || envApiKey;
 
   useEffect(() => {
     const stored = getHaikus();
     setHaikus(stored);
 
     const storedKey = getApiKey();
-    if (storedKey) {
-      setApiKey(storedKey);
-    } else {
-      setShowApiInput(true);
-    }
+    setApiKey(storedKey);
 
     const sharedHaiku = getHaikuFromUrl();
     if (sharedHaiku) {
@@ -32,9 +31,13 @@ export const HopelozeHaikusPage = () => {
     }
   }, []);
 
+  useEffect(() => {
+    setShowApiInput(!activeApiKey);
+  }, [activeApiKey]);
+
   const handleGenerate = async () => {
-    if (!apiKey) {
-      setError('Voer eerst een API key in');
+    if (!activeApiKey) {
+      setError('API key vereist! Voer je Gemini key in.');
       setShowApiInput(true);
       return;
     }
@@ -43,7 +46,7 @@ export const HopelozeHaikusPage = () => {
     setError('');
 
     try {
-      const text = await generateHaiku(apiKey, extraHopeloosheid);
+      const text = await generateHaiku(activeApiKey, extraHopeloosheid);
 
       const newHaiku: Haiku = {
         id: crypto.randomUUID(),
@@ -54,16 +57,22 @@ export const HopelozeHaikusPage = () => {
 
       saveHaiku(newHaiku);
       setHaikus(prev => [newHaiku, ...prev]);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error generating haiku:', err);
-      setError('Er ging iets mis bij het genereren van de haiku');
+
+      if (err.message?.includes('Te veel requests') || err.message?.includes('429')) {
+        setShowApiInput(true);
+        setError('Rate limited! Voer een andere API key in.');
+      } else {
+        setError(err.message || 'Er ging iets mis bij het genereren van de haiku');
+      }
     } finally {
       setLoading(false);
     }
   };
 
   const handleSaveApiKey = () => {
-    if (apiKey.trim()) {
+    if (apiKey && apiKey.trim()) {
       saveApiKey(apiKey.trim());
       setShowApiInput(false);
       setError('');
@@ -95,7 +104,7 @@ export const HopelozeHaikusPage = () => {
             <div className="flex gap-3">
               <input
                 type="password"
-                value={apiKey}
+                value={apiKey || ''}
                 onChange={(e) => setApiKey(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSaveApiKey()}
                 placeholder="Voer je API key in..."
